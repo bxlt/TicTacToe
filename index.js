@@ -7,6 +7,12 @@ const gameBoard = (function() {
         board = [["","",""],["","",""],["","",""]];
     }
 
+    const printBoard = () => {
+        board.forEach(function(row) {
+            console.log(row);
+          });
+    }
+
     const checkWin = (sign) =>{
         //1.check row
         //2.check col
@@ -14,7 +20,7 @@ const gameBoard = (function() {
         return checkRow(sign) || checkCol(sign)||checkDiag(sign);
     }
 
-    const playMark = (r,c,sign) =>{
+    const placeMark = (r,c,sign) =>{
         if(board[r][c]===""){
             board[r][c] = sign;
         }
@@ -24,7 +30,7 @@ const gameBoard = (function() {
         let res = false;
         for(let i=0;i<row;i++){
             let count = 0;
-            for(let j=0; i<col; j++){
+            for(let j=0; j<col; j++){
                 if(board[i][j]===sign){
                     count++;
                 }
@@ -41,7 +47,7 @@ const gameBoard = (function() {
         let res = false;
         for(let i=0;i<col;i++){
             let count = 0;
-            for(let j=0; i<row; j++){
+            for(let j=0; j<row; j++){
                 if(board[j][i]===sign){
                     count++;
                 }
@@ -73,7 +79,7 @@ const gameBoard = (function() {
 
 
 
-    return {board}
+    return {board,clear, placeMark, checkWin,printBoard};
 })();
 
 
@@ -89,5 +95,60 @@ function player(name,mark){
     const addPoint = ()=>{
         point++;
     }
-    return {name,mark,getPoint, addPoint };
+
+    const getMark = () =>{
+        return mark;
+    }
+
+    const reset = () =>{
+        point = 0;
+    }
+
+    const askInput = () => {
+        console.log("its player" + name);
+        let r = prompt("Enter row");
+        let c = prompt("Enter col")
+        console.log("Row-"+r+" Col-"+c);
+        return [parseInt(r), parseInt(c)];
+    }
+
+    return {name,mark,getPoint, addPoint,reset,askInput,getMark};
 }
+
+const Game = (function() {
+    const board = gameBoard;
+    const players = [player('1','X') ,player('2','O')];
+    let turn = 0;
+
+    const changeTurn = () =>{
+        turn = (turn+1)%players.length;
+    }
+
+    const play = () => {
+        let winner;
+        let isEnd = false;
+        //show board before input
+        
+
+        while(! isEnd){
+            gameBoard.printBoard();
+            let currP = players[turn];
+            let [currR, currC] = currP.askInput();
+            gameBoard.placeMark(currR, currC, currP.mark);
+            //console()
+            if(board.checkWin(currP.getMark())){
+                winner = turn;
+                isEnd=true;
+                gameBoard.printBoard();
+            }else{
+                changeTurn();
+            }
+        }
+        console.log("winner is " + winner);
+    }
+
+    
+    return {play};
+})();
+
+Game.play();
