@@ -108,8 +108,13 @@ const gameBoard = (function() {
     }
 
 
+    const displayRes = (output) =>{
+        const title = document.getElementById("result");
+        title.textContent = output;
+    }
 
-    return {board,colNum, rowNum, clear, placeMark, checkWin,endGame};
+
+    return {board,colNum, rowNum, clear, placeMark, checkWin,endGame,displayRes};
 })();
 
 
@@ -188,7 +193,7 @@ const Game = (function() {
                     count++;
                     console.log(count);
                     if(count===9){
-                        console.log('Tie');
+                        board.displayRes("Tie");
                         endGame();
                         return;
                     }
@@ -196,7 +201,7 @@ const Game = (function() {
                     if(!board.checkWin(players[turn].mark)){
                         changeTurn();
                     }else {
-                        console.log("winner is " + turn);
+                        board.displayRes("winner is " + turn);
                         endGame();
                         return;
                     }
